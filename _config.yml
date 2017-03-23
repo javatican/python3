@@ -7,7 +7,7 @@ twitter_username:
 github_username: 
 # Build settings
 markdown: kramdown
-theme: minima
+theme: jekyll-theme-minimal
 gems:
   - jekyll-feed
   - jemoji

@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Pygame介紹"
+title:  "Pygame介紹 - Part 1"
 date:   2017-03-17
 categories: pygame
 ---
@@ -32,11 +32,11 @@ while not done: #3
 
 幾個重點說明:
 
-1. 起始的第一步驟, 呼叫pygame.init()來初始化pygame的所有模組, 雖然不會同時使用到各個模組, 因此也可以選定要初始化的個別模組, 這裡就直接初始化display模組.
-1. 建立根視窗: display.set_mode()傳入所要建立的根視窗大小, 回傳Surface物件.
-1. while迴圈是pygame的主要(main)迴圈, 它會一直執行, 直到收到一個QUIT事件, 才會將變數done更新為True,然後離開主要迴圈.
-1. 主要迴圈中包含一個for-in迴圈, 這是讀取event的迴圈, 每次從event queue(佇列)中讀取所有的event物件, 並且清除queue. QUIT事件是一定會處理的事件, 其他的事件處理, 其邏輯也會寫在此迴圈中.
-1. pygame使用雙重buffer機制來更新畫面, 這裡就是切換buffer的動作.
+1. 第一步驟先呼叫`pygame.init()`來初始化pygame的所有模組, 如果程式中不會同時使用到各個模組, 也可以選定要初始化的個別模組, 這裡就直接初始化display模組`pygame.display.init()`.
+1. 建立根視窗: `display.set_mode()`傳入所要建立的根視窗大小, 回傳`Surface`物件.
+1. while迴圈是pygame的主要(main)迴圈, 它會一直執行, 直到收到一個QUIT事件, 才會將變數done更新為True, 然後離開主要迴圈.
+1. 主要迴圈中包含一個for-in迴圈, 這是讀取event的迴圈, 每次從event queue(佇列)中讀取所有的event物件, 並且清除queue. `pygame.QUIT`事件是一個停止的事件, 用來關閉程式.若有其他的事件須處理, 其邏輯也會寫在此迴圈中.
+1. pygame使用雙重buffer機制來更新畫面, `display.flip()`就是切換buffer的動作.
 
 ## draw模組
 接下來畫畫一些基本的圖形元件, 例如rectangle, circle等
@@ -51,7 +51,7 @@ pygame.draw.rect()
 
     Keep in mind the Surface.fill() method works just as well for drawing filled rectangles. In fact the Surface.fill() can be hardware accelerated on some platforms with both software and hardware display modes.
 ```
-例如
+例如:
 ```
 pygame.draw.rect(screen, (0,128,255),pygame.Rect(10,10,60,60), 5)
 ```
@@ -60,17 +60,19 @@ pygame.draw.rect(screen, (0,128,255),pygame.Rect(10,10,60,60), 5)
 1. 邊框顏色(如果width參數為0, 則為填入的顏色)
 1. 矩形大小(Rect物件)
 1. width代表邊框大小, 預設值為0, 代表所畫的的矩形為填滿的
-*備註: Rect物件會在後面的文章再詳細說明, 這邊舉一個產生該物件的例子:
-pygame.Rect(10,10,60,60), 參數分別代表矩形的左上角座標x,y及寬width,高height*
 
-這一行要放在哪裡呢?
+*備註: Rect物件會在後面的文章再詳細說明, 這邊舉一個產生該物件的例子:
+`pygame.Rect(10,10,60,60)`, 參數分別代表矩形的左上角座標x,y及寬width,高height*
+
+這一行要放在哪裡呢? 因為它只是一個靜態的Rect, 我們可以把它放在while迴圈之外. 
+如果放在while迴圈內, 則這行敘述會一直被重複執行, 每一次畫一個新的Rect, 浪費cpu. 
 ```python
 import pygame
 
 pygame.display.init()
 
 screen = pygame.display.set_mode((400, 300))
-pygame.draw.rect(screen, (0,128,255),pygame.Rect(10,10,60,60), 5)
+pygame.draw.rect(screen, (0,128,255),pygame.Rect(10,10,60,60), 5) ###
 done = False
 
 while not done:

@@ -1,0 +1,16 @@
+title: 但去莫復問白雲無盡時
+email: ryan@migulu.com
+description: > # this means to ignore newlines until "baseurl:"
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "" # the base hostname & protocol for your site, e.g. http://example.com
+twitter_username:  
+github_username: 
+# Build settings
+markdown: kramdown
+theme: minima
+gems:
+  - jekyll-feed
+  - jemoji
+exclude:
+  - Gemfile
+  - Gemfile.lock

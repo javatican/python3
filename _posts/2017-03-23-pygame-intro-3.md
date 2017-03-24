@@ -17,7 +17,7 @@ categories: pygame
 
 在第一個範例時, 我們就用到了一個Surface物件, 也就是`pygame.display.setMode()`所產生的根視窗, 稱之為視窗, 其實不對, 應該是一個類似畫布的影像. 
 每一個Surface物件具有固定的解析度以及pixel(像素)格式. 這個pixel格式指的就是它的`bit depth`. 所謂的`bit depth`代表每一個pixel可以使用多少個bits來儲存顏色. 
-例如24-bit的depth代表可以有$2^24$個顏色階層, 約16.7百萬種. 
+例如24-bit的depth代表可以有2的24次方個顏色階層, 約16.7百萬種. 
 
 ### 產生Surface物件
 
@@ -65,7 +65,7 @@ while not done:
 說明:
 1. 呼叫Surface建構子, 產生Surface物件, 解析度為100*100, 預設會是一個全黑的影像
 1. 同樣是呼叫Surface建構子, 但是多傳入了一個參數`pygame.SRCALPHA`, 表示這個影像的pixel顏色包含了透明度(alpha)值, 預設是全透明的影像.
-1. `screen.blit(sur1,(100,200))`將sur1呈現在底層的screen上, 放置的位置在(100,200).
+1. `screen.blit(sur1,(100,200))`將sur1呈現在根視窗(Surface物件)上, 放置的位置在(100,200).
 
 ### 載入影像檔
 在PyGame中, 每一個載入的影像檔, 也是一個Surface物件. 可以利用`pygame.image.load()`來載入. 看一看說明文件:
@@ -114,8 +114,8 @@ while not done:
 ```
 說明:
 1. `image.load()`載入ball.png檔案後, 會回傳一個Surface物件, 且保留影像檔中原本的顏色格式及透明度. 
-通常我們會將讀入的影像做轉換, 將它的**pixel格式轉換成與目前顯示的根視窗相同的格式, 以加速blit動作**.
-1. ball.png在球的形狀之外有白色的背景, 可以呼叫`set_colorkey()`來將白色設定為透明色.
+通常我們會將讀入的影像做轉換, 將它的**pixel格式轉換成與目前顯示的根視窗相同的格式, 以加速將來blit的運算**.
+1. ball.png影像中, 在球的形狀之外有白色的背景, 可以呼叫`set_colorkey(white)`來將白色設定為透明色.
 這裡呼叫`convert()`來轉換pixel格式, 有另一個函數`convert_alpha()`也可以做到. 兩者差異後面再說.
 1. 呼叫blit(), 呈現影像在(100,200)的位置
 
@@ -124,7 +124,7 @@ while not done:
 
 上面提及到為了加速影像在blit動作的執行速度, 我們會將影像的pixel格式轉換成與目前顯示的根視窗相同的格式. 有兩個轉換函數可以使用.
 - convert() : 轉換後的pixel透明度資料會被移除
-- convert_alpha() : 轉換後的pixel透明度將被保留. 以方便快速進行`alpha blit`動作
+- convert_alpha() : 轉換後的pixel透明度將被保留. 以加速將來`alpha blit`的運算
 
 ## Bouncing ball 範例
 
@@ -162,7 +162,7 @@ while True:
 ```
 說明:
 1. `ballrect=ball.get_rect()` 可以取得涵蓋整個Surface物件的一個Rect物件, 由於Surface物件並不包含位置資訊, 所以這個Rect物件的預設位置設在(0,0). 
-可以利用`ball.get_rect(center=(x,y))`將Rect中心位置設在(x,y). 這個Rect物件會在做blit動作時, 那來作為影像放置的位置參數.
+可以利用`ball.get_rect(center=(x,y))`將Rect中心位置設在(x,y). 這個Rect物件會在做blit動作時, 拿來作為blit的位置參數.
 1. `ballrect.move_ip(speed)` 將Rect物件移動位置
 1. 當Rect物件的左右邊界, 超出根視窗的左右範圍時, 翻轉speed[0]變數(水平位移的速度)的符號
 1. `screen.blit(ball, ballrect)` 將代表球的Surface物件與根Surface物件, 做blit, 並以ballrect的左上角位置當作blit的位置.

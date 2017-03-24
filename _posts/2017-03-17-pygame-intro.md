@@ -39,8 +39,8 @@ while not done: #3
 1. pygame使用雙重buffer機制來更新畫面, `display.flip()`就是切換buffer的動作.
 
 ## draw模組
-接下來畫畫一些基本的圖形元件, 例如rectangle, circle等
-### Rectangle元件
+接下來畫畫一些基本的圖形, 例如rectangle, circle等
+### Rectangle
 首先看看它的說明文件:
 ```
 pygame.draw.rect()
@@ -58,14 +58,17 @@ pygame.draw.rect(screen, (0,128,255),pygame.Rect(10,10,60,60), 5)
 參數:
 1. 底層Surface物件
 1. 邊框顏色(如果width參數為0, 則為填入的顏色)
-1. 矩形大小(Rect物件)
+1. Rect物件, 代表所要畫的矩形的大小
 1. width代表邊框大小, 預設值為0, 代表所畫的的矩形為填滿的
 
 *備註: Rect物件會在後面的文章再詳細說明, 這邊舉一個產生該物件的例子:
 `pygame.Rect(10,10,60,60)`, 參數分別代表矩形的左上角座標x,y及寬width,高height*
 
+要注意的是**Rect物件, 僅僅是代表一個具有x,y位置, 長, 寬的一種資料物件, 它並不是那個顯示在畫面上的矩形形狀**
+
 這一行要放在哪裡呢? 因為它只是一個靜態的Rect, 我們可以把它放在while迴圈之外. 
-如果放在while迴圈內, 則這行敘述會一直被重複執行, 每一次畫一個新的Rect, 浪費cpu. 
+如果放在while迴圈內, 則這行敘述會一直被重複執行, 每一次畫一個新的Rect, 浪費cpu.
+ 
 ```python
 import pygame
 
@@ -82,7 +85,7 @@ while not done:
     
     pygame.display.flip()
 ```
-### Circle模組
+### Circle
 ```
 pygame.draw.circle()
     draw a circle around a point
@@ -93,6 +96,7 @@ pygame.draw.circle()
 ```
 pygame.draw.circle(screen, (0,128,255), (100,100), 30, 5)
 ```
+注意: 無論是前面的`draw.rect()`或是這裡的`draw.circle()`, 都是在底層的Surface物件上畫上相關的形狀, 這兩個函數都有回傳值, 也就是一個`Rect物件`, 代表所畫的形狀的外界範圍. 
 
 ### 其他圖案元件
 pygame.draw模組中包含以下這些圖案元件

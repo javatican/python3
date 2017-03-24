@@ -33,7 +33,7 @@ while not done: #3
 幾個重點說明:
 
 1. 第一步驟先呼叫`pygame.init()`來初始化pygame的所有模組, 如果程式中不會同時使用到各個模組, 也可以選定要初始化的個別模組, 這裡就直接初始化display模組`pygame.display.init()`.
-1. 建立根視窗: `display.set_mode()`傳入所要建立的根視窗大小, 回傳`Surface`物件.
+1. 建立根視窗: `display.set_mode()`傳入所要建立的根視窗解析度大小, 回傳`Surface`物件. 注意**解析度是一個tuple參數(包括在(,)中)**
 1. while迴圈是pygame的主要(main)迴圈, 它會一直執行, 直到收到一個QUIT事件, 才會將變數done更新為True, 然後離開主要迴圈.
 1. 主要迴圈中包含一個for-in迴圈, 這是讀取event的迴圈, 每次從event queue(佇列)中讀取所有的event物件, 並且清除queue. `pygame.QUIT`事件是一個停止的事件, 用來關閉程式.若有其他的事件須處理, 其邏輯也會寫在此迴圈中.
 1. pygame使用雙重buffer機制來更新畫面, `display.flip()`就是切換buffer的動作.
@@ -57,7 +57,7 @@ pygame.draw.rect(screen, (0,128,255),pygame.Rect(10,10,60,60), 5)
 ```
 參數:
 1. 底層Surface物件
-1. 邊框顏色(如果width參數為0, 則為填入的顏色)
+1. 邊框顏色(如果width參數為0, 則為填入的顏色), 注意**顏色參數為一個tuple**
 1. Rect物件, 代表所要畫的矩形的大小
 1. width代表邊框大小, 預設值為0, 代表所畫的的矩形為填滿的
 

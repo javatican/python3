@@ -8,9 +8,9 @@ categories: pygame
 這是PyGame介紹文的Part 2. 
 [Part 1]({{site.baseurl}}{% post_url 2017-03-17-pygame-intro %})介紹了基本程式架構及draw module. 
 
-接著繼續看如何利用keyboard事件來改變矩型的顏色.
+接著繼續看如何利用keyboard事件來改變矩形的顏色.
 
-## 改變矩型顏色
+## 改變矩形顏色
 ```python
 import pygame
 
@@ -38,8 +38,8 @@ while not done:
 
 注意: 這個範例**並不是去改變已經畫在畫布上的矩形,  而是每次重新畫一個矩形.** 但是因為是畫在相同的位置, 所以感覺像是變化了顏色.
 
-## 移動矩型位置
-接下來, 利用上下左右四個key, 來移動矩型. 這四個key分別為`pygame.K_UP`, `pygame.K_DOWN`, `pygame.K_LEFT`, `pygame.K_RIGHT`
+## 移動矩形位置
+接下來, 利用上下左右四個key, 來移動矩形. 這四個key分別為`pygame.K_UP`, `pygame.K_DOWN`, `pygame.K_LEFT`, `pygame.K_RIGHT`
 
 ```python
 import pygame
@@ -87,7 +87,7 @@ while not done:
 
 注意: 跟改變顏色的範例一樣, 這個範例**並不是去改變已經畫在畫布上的矩形,  而是每次重新畫一個矩形.**
 
-## 移動矩型位置 - 2nd try
+## 移動矩形位置 - 2nd try
 
 上述範例可以改寫, 不要每次畫矩形時, 都產生一個新的Rect物件, 實際上可以共用一個Rect物件, 讓其位置做變動即可.
 

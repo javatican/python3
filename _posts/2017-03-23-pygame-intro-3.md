@@ -6,7 +6,9 @@ categories: pygame
 ---
  
 這是PyGame介紹文的Part 3. 
+
 [Part 1]({{site.baseurl}}{% post_url 2017-03-17-pygame-intro %})介紹了基本程式架構及draw module. 
+
 [Part 2]({{site.baseurl}}{% post_url 2017-03-23-pygame-intro-2 %})介紹如何在pygame主迴圈裡重複畫新的矩形以及控制主迴圈執行的頻率 
 
 繼續看如何使用Surface物件, 以及使用影像檔.
@@ -14,8 +16,8 @@ categories: pygame
 ## Surface物件
 
 在第一個範例時, 我們就用到了一個Surface物件, 也就是`pygame.display.setMode()`所產生的根視窗, 稱之為視窗, 其實不對, 應該是一個類似畫布的影像. 
-Surface物件具有固定的解析度以及每個pixel(像素)的`bit depth`. 所謂的`bit depth`代表每一個pixel可以使用多少個bit來儲存其顏色. 
-例如24-bit的depth代表可以有2^24個顏色階層, 約16.7百萬種. 
+每一個Surface物件具有固定的解析度以及pixel(像素)格式. 這個pixel格式指的就是它的`bit depth`. 所謂的`bit depth`代表每一個pixel可以使用多少個bits來儲存顏色. 
+例如24-bit的depth代表可以有$2^24$個顏色階層, 約16.7百萬種. 
 
 ### 產生Surface物件
 
@@ -87,5 +89,83 @@ pygame.image.load()
 	eg. asurf = pygame.image.load(os.path.join('data', 'bla.png'))
 ```
 
- 
+以下是一個簡單範例:
+
+```python
+import pygame
+
+pygame.display.init()
+
+screen = pygame.display.set_mode((600, 400))
+white = (255,255,255)
+screen.fill(white)
+done = False 
+img = pygame.image.load("ball.png").convert() #1
+img.set_colorkey(white) #2
+screen.blit(img, (100,200)) #3
+clock = pygame.time.Clock()
+while not done:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
+        
+    pygame.display.flip()
+    clock.tick(60)
+```
+說明:
+1. `image.load()`載入ball.png檔案後, 會回傳一個Surface物件, 且保留影像檔中原本的顏色格式及透明度. 
+通常我們會將讀入的影像做轉換, 將它的**pixel格式轉換成與目前顯示的根視窗相同的格式, 以加速blit動作**.
+1. ball.png在球的形狀之外有白色的背景, 可以呼叫`set_colorkey()`來將白色設定為透明色.
+這裡呼叫`convert()`來轉換pixel格式, 有另一個函數`convert_alpha()`也可以做到. 兩者差異後面再說.
+1. 呼叫blit(), 呈現影像在(100,200)的位置
+
+
+## 改變影像的pixel格式
+
+上面提及到為了加速影像在blit動作的執行速度, 我們會將影像的pixel格式轉換成與目前顯示的根視窗相同的格式. 有兩個轉換函數可以使用.
+- convert() : 轉換後的pixel透明度資料會被移除
+- convert_alpha() : 轉換後的pixel透明度將被保留. 以方便快速進行`alpha blit`動作
+
+## Bouncing ball 範例
+
+在這個部份的最後, 用一個bouncing ball的範例做結束.
+```python
+import sys, pygame
+
+pygame.init()
+
+clock=pygame.time.Clock()
+size = width, height = 320, 240
+speed = [1, 1] 
+white = 255,255,255
+
+screen = pygame.display.set_mode(size)
+
+ball = pygame.image.load("ball.png").convert()
+ball.set_colorkey(white)
+
+ballrect = ball.get_rect() #1
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT: sys.exit()
+
+    ballrect.move_ip(speed) #2
+    if ballrect.left < 0 or ballrect.right > width: #3
+        speed[0] = -speed[0]
+    if ballrect.top < 0 or ballrect.bottom > height:
+        speed[1] = -speed[1]
+
+    screen.fill(white)
+    screen.blit(ball, ballrect) #4
+    pygame.display.flip()
+    clock.tick(60)
+```
+說明:
+1. `ballrect=ball.get_rect()` 可以取得涵蓋整個Surface物件的一個Rect物件, 由於Surface物件並不包含位置資訊, 所以這個Rect物件的預設位置設在(0,0). 
+可以利用`ball.get_rect(center=(x,y))`將Rect中心位置設在(x,y). 這個Rect物件會在做blit動作時, 那來作為影像放置的位置參數.
+1. `ballrect.move_ip(speed)` 將Rect物件移動位置
+1. 當Rect物件的左右邊界, 超出根視窗的左右範圍時, 翻轉speed[0]變數(水平位移的速度)的符號
+1. `screen.blit(ball, ballrect)` 將代表球的Surface物件與根Surface物件, 做blit, 並以ballrect的左上角位置當作blit的位置.
+
+
 :sweat_smile:

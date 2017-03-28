@@ -100,7 +100,9 @@ screen = pygame.display.set_mode((600, 400))
 white = (255,255,255)
 screen.fill(white)
 done = False 
-img = pygame.image.load("ball.png").convert() #1
+dir_name = os.path.dirname(os.path.realpath(__file__))
+image_path = os.path.join(dir_name,"images/ball.png")
+img = pygame.image.load(image_path).convert() #1
 img.set_colorkey(white) #2
 screen.blit(img, (100,200)) #3
 clock = pygame.time.Clock()
@@ -115,8 +117,8 @@ while not done:
 說明:
 1. `image.load()`載入ball.png檔案後, 會回傳一個Surface物件, 且保留影像檔中原本的顏色格式及透明度. 
 通常我們會將讀入的影像做轉換, 將它的**pixel格式轉換成與目前顯示的根視窗相同的格式, 以加速將來blit的運算**.
-1. ball.png影像中, 在球的形狀之外有白色的背景, 可以呼叫`set_colorkey(white)`來將白色設定為透明色.
 這裡呼叫`convert()`來轉換pixel格式, 有另一個函數`convert_alpha()`也可以做到. 兩者差異後面再說.
+1. ball.png影像中, 在球的形狀之外有白色的背景, 可以呼叫`set_colorkey(white)`來將白色設定為透明色.
 1. 呼叫blit(), 呈現影像在(100,200)的位置
 
 
@@ -141,7 +143,9 @@ white = 255,255,255
 
 screen = pygame.display.set_mode(size)
 
-ball = pygame.image.load("ball.png").convert()
+dir_name = os.path.dirname(os.path.realpath(__file__))
+image_path = os.path.join(dir_name,"images/ball.png")
+ball = pygame.image.load(image_path).convert()
 ball.set_colorkey(white)
 
 ballrect = ball.get_rect() #1

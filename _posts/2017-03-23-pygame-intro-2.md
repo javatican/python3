@@ -26,20 +26,25 @@ while not done:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE: #1
             is_red = not is_red
     if is_red:
-        color = (255,0,0)
+        color = (255,0,0) #2
     else:
         color = (255,255,255)
-    pygame.draw.rect(screen,color,pygame.Rect(10,10,60,60)) #2
+    pygame.draw.rect(screen,color,pygame.Rect(10,10,60,60)) #3
     pygame.display.flip()
 ```
 說明:
 1. 當鍵盤某個鍵被按下時, 會觸發`pygame.KEYDOWN`型態的事件, 搭配event.key, 會告訴我們到底是那一個key被按下, 這裡使用`pygame.K_SPACE`(空白鍵).
+1. 顏色可以用包含三個整數(0-255)的tuple來表示, 也可以使用pygame.Color()來建構顏色物件. 例如`pygame.Color(255,0,0)`
 1. 將`draw.rect()`放在while迴圈之中, 則會被重複執行, 每一次執行會根據目前color, 位置大小, 畫上新的矩形.
 
 注意: 這個範例**並不是去改變已經畫在畫布上的矩形,  而是每次重新畫一個矩形.** 但是因為是畫在相同的位置, 所以感覺像是變化了顏色.
 
 ## 移動矩形位置
 接下來, 利用上下左右四個key, 來移動矩形. 這四個key分別為`pygame.K_UP`, `pygame.K_DOWN`, `pygame.K_LEFT`, `pygame.K_RIGHT`
+在這個範例中, 我們也企圖控制主要迴圈(main loop)執行的頻率. 
+這個main loop一般情況下會以CPU可以達到的最快速度執行, 因此會佔用100%的CPU時間. 
+我們可以讓這個迴圈在每一個循環中稍微停一下, 空出一些CPU時間給其他的程序執行. 
+我們稱main loop的每一個循環叫做frame(影格), 就像電影也是由frames所組成. 每一個frame有要處理的事件, 更新的程式狀態以及呈現的畫面.  
 
 ```python
 import pygame
@@ -79,10 +84,10 @@ while not done:
 ```
 說明:
 1. x, y 變數代表要畫的矩形的位置, 會隨著被按下的方向key而改變
-1. 取得一個Clock物件, 可以用來追蹤時間, 主要是為了控制while迴圈執行的`頻率(frame rate)`
+1. 取得一個Clock物件, 可以用來追蹤時間, 主要是為了控制main loop執行的`頻率(frame rate)`
 1. 檢核event.type是否為`pygame.KEYDOWN`, event.key是否為`pygame.K_UP`
 1. `screen.fill((0,0,0))`用來在畫矩形前, 先將Surface物件的背景填滿黑色, 也就是清除畫布的意思, 因此只會看到新畫上去的矩形
-1. `clock.tick(60)` 用來控制while迴圈執行的`頻率(frame rate)`, 60代表while迴圈執行的頻率約60 frames/sec, 也就是每執行一個循環不會快過1/60秒(約16 msec).
+1. `clock.tick(60)` 用來控制main loop執行的`頻率(frame rate)`, 60代表main loop執行的頻率約60 frames/sec(60 FPS), 也就是每執行一個循環不會快過1/60秒(約16 msec).
 1. `clock.get_time()` 取得最後兩次呼叫clock.tick()的時間間隔(單位為msec), 所以應該會看到時間間隔約為16 msec. 
 
 注意: 跟改變顏色的範例一樣, 這個範例**並不是去改變已經畫在畫布上的矩形,  而是每次重新畫一個矩形.**

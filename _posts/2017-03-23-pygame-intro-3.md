@@ -15,7 +15,7 @@ categories: pygame
 
 ## Surface物件
 
-在第一個範例時, 我們就用到了一個Surface物件, 也就是`pygame.display.setMode()`所產生的根視窗, 稱之為視窗, 其實不對, 應該是一個類似畫布的影像. 
+在第一個範例時, 我們就用到了一個Surface物件, 也就是`pygame.display.setMode()`所產生的根視窗(display Surface). 稱之為視窗, 其實不對, 應該是一個類似畫布的影像, 在PyGame中稱為Surface.
 每一個Surface物件具有固定的解析度以及pixel(像素)格式. 這個pixel格式指的就是它的`bit depth`. 所謂的`bit depth`代表每一個pixel可以使用多少個bits來儲存顏色. 
 例如24-bit的depth代表可以有2的24次方個顏色階層, 約16.7百萬種. 
 
@@ -30,7 +30,7 @@ Surface((width, height), flags=0, Surface) -> Surface
 
 ### 如何呈現Surface物件
 
-產生出來的Surface物件, 若要顯示出來, 就必須在根視窗(記得也是一個影像, 位於最底層的Surface)上呈現. 這個動作, 在電腦圖像領域有一個專有名詞來代表它, 稱為[Bit blit](https://en.wikipedia.org/wiki/Bit_blit), 是`bit block trasfer`的意思, 也就是**多個圖檔利用布林函數整合成一個圖檔**.
+產生出來的Surface物件, 若要顯示出來, 就必須在根視窗(display Surface)上呈現. 這個動作, 在電腦圖像領域有一個專有名詞來代表它, 稱為[Bit blit](https://en.wikipedia.org/wiki/Bit_blit), 是`bit block trasfer`的意思, 也就是**多個圖檔利用布林函數整合成一個圖檔**.
 
 Surface物件有blit()函數可以完成這個工作. 說明文件如下:
 ```
@@ -63,9 +63,9 @@ while not done:
     pygame.display.flip()
 ```
 說明:
-1. 呼叫Surface建構子, 產生Surface物件, 解析度為100*100, 預設會是一個全黑的影像
-1. 同樣是呼叫Surface建構子, 但是多傳入了一個參數`pygame.SRCALPHA`, 表示這個影像的pixel顏色包含了透明度(alpha)值, 預設是全透明的影像.
-1. `screen.blit(sur1,(100,200))`將sur1呈現在根視窗(Surface物件)上, 放置的位置在(100,200).
+1. 呼叫Surface建構子, 產生Surface物件, 解析度為100*100, 預設會是一個全黑(0,0,0)的影像
+1. 同樣是呼叫Surface建構子, 但是多傳入了一個參數`pygame.SRCALPHA`, 表示這個影像的pixel顏色包含了`透明度(alpha)`值, 預設是全透明的影像.
+1. `screen.blit(sur1,(100,200))`將sur1呈現在根視窗(display Surface)上, 放置的位置在(100,200).
 
 ### 載入影像檔
 在PyGame中, 每一個載入的影像檔, 也是一個Surface物件. 可以利用`pygame.image.load()`來載入. 看一看說明文件:
@@ -125,8 +125,8 @@ while not done:
 ## 改變影像的pixel格式
 
 上面提及到為了加速影像在blit動作的執行速度, 我們會將影像的pixel格式轉換成與目前顯示的根視窗相同的格式. 有兩個轉換函數可以使用.
-- convert() : 轉換後的pixel透明度資料會被移除
-- convert_alpha() : 轉換後的pixel透明度將被保留. 以加速將來`alpha blit`的運算
+- `convert()` : 轉換後的pixel透明度資料會被移除
+- `convert_alpha()` : 轉換後的pixel透明度將被保留. 以加速將來`alpha blit`的運算
 
 ## Bouncing ball 範例
 

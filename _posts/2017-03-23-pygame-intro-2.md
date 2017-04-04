@@ -33,7 +33,7 @@ while not done:
     pygame.display.flip()
 ```
 說明:
-1. 當鍵盤某個鍵被按下時, 會觸發`pygame.KEYDOWN`型態的事件, 搭配event.key, 會告訴我們到底是那一個key被按下, 這裡使用`pygame.K_SPACE`(空白鍵).
+1. 當鍵盤某個鍵被按下時, 會觸發`pygame.KEYDOWN`型態的事件, 搭配event.key, 會告訴我們到底是那一個key被按下, 這裡使用`pygame.K_SPACE`(空白鍵). K_SPACE是一個已經定義的常數, PyGame所支援的key常數, 請見[pygame.key說明](https://www.pygame.org/docs/ref/key.html).
 1. 顏色可以用包含三個整數(0-255)的tuple來表示, 也可以使用pygame.Color()來建構顏色物件. 例如`pygame.Color(255,0,0)`
 1. 將`draw.rect()`放在while迴圈之中, 則會被重複執行, 每一次執行會根據目前color, 位置大小, 畫上新的矩形.
 
@@ -44,7 +44,7 @@ while not done:
 在這個範例中, 我們也企圖控制主要迴圈(main loop)執行的頻率. 
 這個main loop一般情況下會以CPU可以達到的最快速度執行, 因此會佔用100%的CPU時間. 
 我們可以讓這個迴圈在每一個循環中稍微停一下, 空出一些CPU時間給其他的程序執行. 
-我們稱main loop的每一個循環叫做frame(影格), 就像電影也是由frames所組成. 每一個frame有要處理的事件, 更新的程式狀態以及呈現的畫面.  
+我們稱main loop的每一個循環叫做`frame(影格)`, 就像電影也是由frames所組成. 每一個frame有要處理的事件, 更新的程式狀態以及呈現的畫面.  
 
 ```python
 import pygame
@@ -136,6 +136,7 @@ while not done:
 1. 每一次當方向key被按下時, 呼叫`my_rect.move_ip()`, 將Rect的位置移動. 見後面詳細說明.
 1. draw.rect()使用my_rect, 並沒有每一次呼叫都產生新的Rect物件
 
+### Rect的 move() vs. move_ip()
 檢視一下Rect的說明文件:
 ```
 move()
@@ -149,7 +150,7 @@ move_ip()
 	Same as the Rect.move() method, but operates in place.
 ```
 
-移動函數有兩個版本:
+Rect的移動函數有兩個版本:
 - move(x,y): 不會改變原來的Rect物件, 而會產生一個新的Rect物件, 做位移x,y後, 回傳該新的Rect物件
 - move_ip(x,y): 不會產生新的Rect物件, 而是改變原本的Rect物件的位置, 沒有回傳值
 

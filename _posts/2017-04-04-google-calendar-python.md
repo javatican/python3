@@ -14,9 +14,9 @@ categories: python
 ### OAuth
 在說明程式細節前, 先整理一下關於呼叫Google APIs所需使用到的OAuth 2.0協定. 
 
-OAuth是一種開放式的授權(Authorization)標準，讓使用者可以授權第三方應用, 存取他在某一網站上儲存的私密的資源, 如相片，影片，聯絡人等資訊，而無需使用者將他登入到該網站的名稱和密碼, 透露給第三方應用。 這相當於若是要允許外人進入到家裡, 最不安全的方式是把大門鑰匙交給別人, 比較安全的方式是自己用鑰匙打開門讓人進去. 
+OAuth是一種開放式的授權(Authorization)標準, 讓使用者可以授權第三方應用, 存取他在某一網站上儲存的私密的資源, 如相片, 聯絡人等資訊, 而無需使用者將他登入到該網站的名稱和密碼, 透露給第三方應用. 這相當於若是要允許外人進入到家裡, 最不安全的方式是把大門鑰匙交給這個人, 比較安全的方式是自己用鑰匙打開門讓人進去. 
 
-基本作法: 這個第三方應用(Consumer, 消費者), 必須先取得資源網站(Service Provider, 服務提供者)所提供的一組tokens(`Consumer Key/Secret`), 如此一來, 這個第三方應用才可以建立與資源網站的連結. 使用者使用這個第三方應用之前, 會先連線到資源網站的畫面去做登入和授權的步驟(使用者登入的密碼是直接在資源網站內輸入, 因此不會洩漏給第三方應用). 授權之後, 這個第三方應用會從資源網站處取得另一個token(`Access Token`). 爾後必須使用這個token, 才能夠去資源網站存取使用者的私密資源.
+基本作法: 這個第三方應用(稱為Consumer, 消費者), 必須先取得資源網站(稱為Service Provider, 服務提供者)所提供的一組tokens(`Consumer Key/Secret`), 如此一來, 這個第三方應用才可以建立與資源網站的連結. 使用者使用這個第三方應用之前, 會先連線到資源網站的畫面去做登入和授權的步驟(使用者登入的密碼是直接在資源網站內輸入, 因此不會洩漏給第三方應用). 授權之後, 這個第三方應用會從資源網站處取得另一個token(`Access Token`). 爾後必須使用這個token, 才能夠去資源網站存取使用者的私密資源.
 
 Google APIs根據第三方應用的程式形式不同, 區分為[三種模式](https://developers.google.com/identity/protocols/OAuth2):
 1. OAuth 2.0 for Web Server Applications: 
@@ -33,7 +33,7 @@ Google APIs根據第三方應用的程式形式不同, 區分為[三種模式](h
 ### 選擇Redirect URI
 檢視`client_secrets.json`檔案內容, 可以看到`Redirect URI`有兩個數值: `urn:ietf:wg:oauth:2.0:oob` and `http://localhost`. 這項設定可以控制Python程式如何從Google Authorization Server得到授權碼(`Access Token`). **第一種方式使用`http://localhost`的設定, 代表Access Token將以redirect到client端的web server的query string parameter的方式, 讓client取得Access Token.** 因此這個方式的前提是python程式可以取得local web server存取的資訊. **另一種方式採用 `urn:ietf:wg:oauth:2.0:oob`, 則會在browser的title bar上顯示Access Token, 但是需要使用者複製這個Access Token然後輸入到python程式中.** 
 
-這裡的步驟採用第一種方式, 亦即不需要使用者額外做cut-and-paste的動作. Google 網站上提供的一個現成的python範例程式
+這裡的步驟採用第一種方式, 亦即不需要使用者額外做cut-and-paste的動作. Google 網站上提供的一個python範例程式
 
 ### 安裝Python語言的Google Client Library
 
@@ -174,67 +174,90 @@ from oauth2client import tools
 from oauth2client.file import Storage
 
 import datetime
-
+# global variables
 app = None 
+# 紀錄'近期事件'LabelFrame中放置的Labels, 每次重新整理時必須移除這些Labels
+labels_in_event_list=[] 
+#
 def main():
 	global app
 	app = gui()
-	app.addLabel("l0","Welcome to MyCalendar app",0,0,3)
-	app.addNamedButton("連結Google Calendar","connect", connect,1,0,3)
-	app.startLabelFrame("近期事件") #1
-	row = app.getRow()
-	app.addLabel("l1","無任何事件", row, 0, 3)
-	app.stopLabelFrame() #2
+	app.addLabel("l_title","歡迎使用MyCalendar",app.getRow(),0)
+	app.addNamedButton("連結Google Calendar","connect", connect, app.getRow(),0)
+	# 定義LabelFrame'近期事件'
+	app.startLabelFrame("近期事件")
+	app.addLabel("l_noevent","無任何事件", app.getRow(), 0, 3)
 	#
-	app.startLabelFrame("新增事件")
-	row = app.getRow()
-	app.addLabelEntry("Summary", row, 0, 3)
-	row = app.getRow()
-	app.addLabelEntry("Description", row, 0, 3)
-	row = app.getRow()
-	app.addLabelEntry("Location", row, 0, 3)
-	row = app.getRow()
-	app.addLabelEntry("Start Date(yyyy-mm-dd)", row, 0, 3)
-	row = app.getRow()
-	app.addLabelEntry("Start Time(hh:mm:ss)", row, 0, 3)
-	row = app.getRow()
-	app.addLabelEntry("End Time(hh:mm:ss)", row, 0, 3)
-	row = app.getRow()
-	app.addNamedButton("新增到Google Calendar","insert", insert,row,0,3)
 	app.stopLabelFrame()
-
+	# 定義LabelFrame'新增事件'
+	app.startLabelFrame("新增事件")
+	app.addLabelEntry("Summary")
+	app.addLabelEntry("Description")
+	app.addLabelEntry("Location")
+	app.addLabelEntry("Start Date(yyyy-mm-dd)")
+	app.addLabelEntry("Start Time(hh:mm:ss)")
+	app.addLabelEntry("End Time(hh:mm:ss)")
+	app.addNamedButton("新增到Google Calendar","insert",insert)
+	app.stopLabelFrame()
+	# 啟動時先隱藏LabelFrames
+	app.hideLabelFrame("近期事件")
+	app.hideLabelFrame("新增事件")
+	# 
 	app.go()
 
 def connect(btn): 
+	"""button event handler: 連結到Google Canlendar, 取得events list"""
 	service = get_calendar_service()
-	app.openLabelFrame("近期事件") #3
-	if app.getLabel("l1"): app.removeLabel("l1")
-	if service is not None:
-		events = get_events(service)
-		#display in a Label frame
-		if events:
-			row = app.getRow()
-			app.addLabel("l%d%d" % (row,0),"開始時間", row, 0)
-			app.addLabel("l%d%d" % (row,1),"主題", row, 1)
-			app.addLabel("l%d%d" % (row,2),"地點", row, 2)
-			for index, event in enumerate(events):
-				start = event['start'].get('dateTime', event['start'].get('date'))
-				start = datetime.datetime.strptime(start[:19], "%Y-%m-%dT%H:%M:%S").strftime("%y-%m-%d(%a) %H:%M")
-				summary = event.get('summary',"無")
-				location = event.get('location',"無")
-				row = app.getRow()
-				app.addLabel("l%d%d" % (row,0), start, row, 0)
-				app.addLabel("l%d%d" % (row,1), summary, row, 1)
-				app.addLabel("l%d%d" % (row,2), location, row, 2)
-		else:
-			row = app.getRow()
-			app.addLabel("l4","無任何事件", row, 0, 3)
-	else:
+	# 改變Button text
+	app.setButton("connect","重新整理")
+	# 顯示LabelFrames
+	app.showLabelFrame("近期事件")
+	app.showLabelFrame("新增事件")
+	# 開啟LabelFrame'近期事件': 更新裡面的內容
+	app.openLabelFrame("近期事件")
+	# 隱藏label
+	app.hideLabel("l_noevent")
+	# 移除LabelFrame'近期事件'中的labels
+	remove_labels()
+	# 清空LabelFrame'近期事件'中的label list
+	global labels_in_event_list
+	labels_in_event_list = []
+	# 連結Google Calendar取得近期的events
+	events = get_events(service)
+	if events:
+		# 顯示列表標題
 		row = app.getRow()
-		app.addLabel("l5","驗證錯誤", row, 0, 3)
+		app.addLabel("l_%d%d" % (row, 0),"開始時間", row, 0)
+		app.addLabel("l_%d%d" % (row, 1),"主題", row, 1)
+		app.addLabel("l_%d%d" % (row, 2),"地點", row, 2)
+		# 將label titles加入到list中, 方便後面的清除畫面
+		labels_in_event_list.append("l_%d%d" % (row, 0))
+		labels_in_event_list.append("l_%d%d" % (row, 1))
+		labels_in_event_list.append("l_%d%d" % (row, 2))
+		# 顯示event list
+		for index, event in enumerate(events):
+			# 開始時間
+			start = event['start'].get('dateTime', event['start'].get('date'))
+			# 將start(datetime string)轉換成datetime物件, 再轉成string(為了要改變呈現的格式)
+			start = datetime.datetime.strptime(start[:19], "%Y-%m-%dT%H:%M:%S").strftime("%y-%m-%d(%a) %H:%M")
+			summary = event.get('summary',"無")
+			location = event.get('location',"無")
+
+			row = app.getRow()
+			app.addLabel("l_%d%d" % (row,0), start, row, 0)
+			app.addLabel("l_%d%d" % (row,1), summary, row, 1)
+			app.addLabel("l_%d%d" % (row,2), location, row, 2)
+			# 將label titles加入到list中, 方便後面的清除畫面
+			labels_in_event_list.append("l_%d%d" % (row,0))
+			labels_in_event_list.append("l_%d%d" % (row,1))
+			labels_in_event_list.append("l_%d%d" % (row,2))
+	else:	
+		# 顯示label		
+		app.showLabel("l_noevent")
 	app.stopLabelFrame()
-	
+
 def insert(btn): 
+	"""button event handler: 連結到Google Canlendar, 新增event"""
 	service = get_calendar_service()
 	event = {
 		'summary': app.getEntry("Summary"),
@@ -251,7 +274,17 @@ def insert(btn):
 	}
 	insert_event(service, event)
 
+
+	
+
+def remove_labels():
+	"""清除LabelFrame'近期事件'中的labels"""
+	for lab in labels_in_event_list:
+		app.removeLabel(lab)
+
+
 def get_calendar_service():
+	"""取得Google Calendar Service物件"""
 	try:
 		import argparse
 		flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
@@ -276,8 +309,7 @@ def get_calendar_service():
 	credential_dir = os.path.join(home_dir, '.credentials')
 	if not os.path.exists(credential_dir):
 		os.makedirs(credential_dir)
-	credential_path = os.path.join(credential_dir,
-								   'MyCalendar.json')
+	credential_path = os.path.join(credential_dir,'MyCalendar.json')
 
 	store = Storage(credential_path)
 	credentials = store.get()
@@ -295,23 +327,23 @@ def get_calendar_service():
 	return service
 
 def get_events(service, num=15):
+	"""連結Google Calendar取得近期的events"""
 	now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-	#print('Getting the upcoming 10 events')
-	
 	eventsResult = service.events().list(
-		calendarId='primary', timeMin=now, maxResults=num, singleEvents=True,
+		calendarId='primary', timeMin=now, 
+		maxResults=num, singleEvents=True,
 		orderBy='startTime').execute()
 	events = eventsResult.get('items', [])
 
 	if not events:
-		#print('No upcoming events found.')
 		app.infoBox("ib1","目前行事曆中沒有新的事件!")
 	return events
 
 def insert_event(service, event):
+	"""新增event"""
 	try:
 		event = service.events().insert(calendarId='primary', body=event).execute()
-		print('Event created: %s' % (event.get('htmlLink')))
+		#print('Event created: %s' % (event.get('htmlLink')))
 		if event:
 			app.infoBox("ib2","新增事件成功!")
 		else:
@@ -319,6 +351,7 @@ def insert_event(service, event):
 	except:
 		traceback.print_exc(file=sys.stdout)
 		app.errorBox("ib2","新增事件失敗!")
+
 if __name__ == '__main__':
 	main()
 ```

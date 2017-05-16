@@ -258,13 +258,17 @@ def on_event(self, event):
 當兩張卡片被選完之後, 呼叫`pygame.event.set_blocked(pygame.MOUSEBUTTONDOWN)`, 設定暫時不接受任何MOUSEBUTTONDOWN事件.
 這個動作可以避免MOUSEBUTTONDOWN事件被連續點擊而累積. 
 
-#### on_draw(self, screen)
+#### on_draw(self, screen)方法
 
 `if self.card1 and self.card2 :` 用來處理當兩張卡片都點選了之後的畫面處理邏輯. 
 這裡先呼叫一次`pygame.display.flip()`來更新畫面, 所以才能看到第二張牌被掀開的結果.
-然後呼叫`pygame.time.wait(2000)`, 讓程式暫停2秒, 讓玩家看到兩張卡片的內容.
+然後呼叫`pygame.time.wait(2000)`, 使程式暫停2秒, 以便玩家可以看到兩張卡片的內容.
 
-`if self.card1.number == self.card2.number:` 若兩張卡片number相同, 則呼叫Card.invalid()移除掉
+`if self.card1.number == self.card2.number:` 若兩張卡片number相同, 則呼叫`invalid()`方法, 
+然後將兩張卡片區塊填上白色surface物件`self.empty_rect_sur`. 
+
+`else:` 則將卡片闔上. 最後將`self.card1`, `self.card1_indices`, `self.card2`, `self.card2_indices`
+清除, 並且恢復接收MOUSEBUTTONDOWN的事件`pygame.event.set_allowed(pygame.MOUSEBUTTONDOWN)`
 
 ```python
 class SceneGame(Scene):

@@ -6,17 +6,19 @@ categories: python
 --- 
 
 撲克牌遊戲[第一部份]({{site.baseurl}}{% post_url 2017-05-15-pygame-card-game-1 %})先將52張牌呈現在畫面上, 然後做一些翻牌的動作.
+
 第二部分將引入一套PyGame的簡單framework, 提供模組化的設計, 可以更方便的進行複雜遊戲的設計. 
 
 ## Scene manager PyGame framework
 
-在網路上搜尋PyGame相關的Scene framework, 結果不多, 或許是因為PyGame多用來設計一些簡單的遊戲.
+在網路上搜尋PyGame相關的Scene framework, 討論的結果不多, 或許是因為PyGame多用來設計一些簡單的遊戲.
 不過即使是簡單的遊戲, 採用一些framework來設計還是可以省掉許多麻煩. 架構清晰, 自然做起工來就有條有理.
 
 ### Nerd Paradise
 找到的第一套關於PyGame的Scene framework是[Nerd Paradise PyGame tutorial網站](http://www.nerdparadise.com/programming/pygame/part7). 
-它的設計利用類別繼承與抽象方法, 定義`BaseScene`的抽象類別. 然後搭配一個主要流程控制的`run_game()`函數.
-所以我們的工作就僅是利用類別繼承的方式, 定義BaseScene子類別. 每一個場景就使用一個BaseScene子類別. 
+它的設計利用類別繼承與抽象方法, 定義`BaseScene`抽象類別. 然後搭配一個主要流程控制的`run_game()`函數.
+所以我們的工作就是利用類別繼承, 定義BaseScene子類別. 每一個場景就使用一個BaseScene子類別. 
+
 BaseScene類別裡面定義了三個抽象方法需要去實作. 這三個方法在每一個frame中都會被呼叫一次.
 - `ProcessInput()` : 每個frame中針對有興趣的event型態做處理邏輯
 - `Update()` : 每個frame中要進行的運算
@@ -28,8 +30,9 @@ BaseScene類別還提供了切換Scene物件的方法`SwitchToScene()`與中斷�
 
 第二套找到的是一個西班牙文網站介紹的[Scene Manager framework](http://razonartificial.com/2010/08/gestionando-escenas-con-pygame/). 
 有一個翻譯自這個網站的英文[網站](https://nicolasivanhoe.wordpress.com/2014/03/10/game-scene-manager-in-python-pygame/)提供了我需要的說明.
-他與`Nerd Paradise`的作法差異之處在於, 它使用了一個`Director類別`來作主要流程的控制物件(Nerd Paradise只是使用了一個run_game()函數). 
-所以在架構設計上更容易使用. 但是基本原理都大同小異.
+
+它與`Nerd Paradise`的作法差異之處在於, 前者使用了一個`Director類別`來作主要流程的控制物件(而後者Nerd Paradise只是使用了一個run_game()函數). 
+所以在架構設計上, 前者更容易使用. 但是兩者的基本原理大同小異.
 
 #### Director類別
 
@@ -41,9 +44,9 @@ BaseScene類別還提供了切換Scene物件的方法`SwitchToScene()`與中斷�
  1. self.quit_flag : 控制主要迴圈是否繼續執行的變數
  1. self.clock : 控制frame rate的 pygame.time.Clock物件
 - `loop(self)`方法 : 該方法包含了pygame的主要遊戲迴圈(game loop), event handling 迴圈.
-在每一個frame中, 呼叫正在運作中的Scene物件裡面的`on_event()`, `on_update()`, `on_draw()`方法 
-- `change_scene(self,scene)`方法: 改變Scene物件
-- `quit(self)`方法: 中斷主要迴圈的執行
+在每一個frame中, 會依序呼叫Scene物件裡面的`on_event()`, `on_update()`, `on_draw()`三個方法.
+- `change_scene(self, scene)`方法: 改變Scene物件(切換場景)
+- `quit(self)`方法: 結束pygame的執行
 
 ```python
 class Director:
@@ -91,7 +94,10 @@ class Director:
 ```
 
 備註:
-1. 我定義了一些static variables, 例如: 根視窗尺寸 - WIDTH, HEIGHT, frame rate - FPS, 及遊戲的title - CAPTION等.
+1. 我定義了一些static variables, 例如: 
+ - 根視窗尺寸 - WIDTH, HEIGHT 
+ - frame rate - FPS 
+ - 遊戲的主題 - CAPTION
 
 
 #### Scene抽象類別
@@ -118,20 +124,20 @@ class Scene:
          raise NotImplementedError("on_draw abstract method must be defined in subclass.")
 ```
 
-### Scene子類別
+#### Scene子類別
 
-我們目前只有一個場景, 所以定義一個Scene子類別SceneHome類別. 我使用static variables來儲存一些重要的變數.
+我們目前只有一個場景, 所以定義一個Scene子類別`SceneHome類別`. 我使用static variables來儲存一些重要的變數.
 - `RATIO = (Director.WIDTH/13)/Card.CARD_WIDTH` : 計算影像的縮放比例, Card.CARD_WIDTH是每一張card的原始寬度, Director.WIDTH是根視窗的寬度.
 - `CARD_WIDTH = Director.WIDTH//13` : 計算要呈現的每一張card的尺寸(寬).
 - `CARD_HEIGHT = int((Director.WIDTH/13)*(Card.CARD_HEIGHT/Card.CARD_WIDTH))` : 計算要呈現的每一張card的尺寸(高)
 - `CARDS_IMAGE` : 用來儲存載入的影像檔.
 
 `__init__(self)`建構子中, 主要進行兩個動作: 
-1. 這個場景中會使用到的資料的準備, 例如self.img, self.cards, self.cover_card_rect, self.sli, self.counter等.
- 為了方便在其他成員方法中使用這些變數, 我都定義為成員變數來作儲存.
+1. 這個場景中會使用的資料的準備, 例如self.img, self.cards, self.cover_card_rect, self.sli, self.counter等.
+ 為了方便在其他成員方法中使用這些變數, 我都將之定義為成員變數.
 1. 初始畫面的準備, 例如我要顯示這52張牌在根視窗中.
 
-`on_draw(self, screen)`方法: 這個會在每一個frame被呼叫一次, 所以我是做掀牌的動作. 
+`on_draw(self, screen)`方法: 這個方法會在每一個frame被呼叫一次, 所以我是做掀牌的動作. 
 
 ```python
 class SceneHome(Scene):
@@ -201,6 +207,30 @@ class SceneHome(Scene):
         screen.blit(self.img, (pos_x, pos_y), rect)
         
         self.counter+=1
+```
+
+#### main()
+
+最後是main()函數. 其中進行的步驟就是:
+1. 初始化pygame modules
+1. 建立Director物件
+1. 建立Scene物件並且指定其為下一個場景
+1. 啟動主要迴圈
+
+```python
+import pygame
+from director import Director
+from my_scenes import SceneHome
+ 
+def main():
+    pygame.display.init()
+    dr = Director()
+    scene = SceneHome(dr)
+    dr.change_scene(scene)
+    dr.loop()
+ 
+if __name__ == '__main__':
+    main()
 ```
 
 :sweat_smile:

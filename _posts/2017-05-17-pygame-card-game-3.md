@@ -282,7 +282,7 @@ class SceneGame(Scene):
         self.cover_card_rect = self.cover_card.get_image_rect(SceneHome.RATIO)
         # 
         self.sli = self.cards[1:53]
-		#洗牌
+        #洗牌
         random.shuffle(self.sli)
         #
         white = (255,255,255)
@@ -295,7 +295,7 @@ class SceneGame(Scene):
             n=i%13
             pos_x=self.dsp_origin_x+n*SceneHome.CARD_WIDTH
             pos_y=self.dsp_origin_y+m*SceneHome.CARD_HEIGHT
-			#以下兩行comment起來, 因為是要顯示闔起來的牌
+            #以下兩行comment起來, 因為是要顯示闔起來的牌
             #card = self.sli[i]
             #rect = card.get_image_rect(SceneHome.RATIO)
             director.screen.blit(self.img, (pos_x, pos_y), self.cover_card_rect)
@@ -313,7 +313,7 @@ class SceneGame(Scene):
     def on_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             #pos = pygame.mouse.get_pos()
-			pos = event.pos
+            pos = event.pos
             i = pos[1]//SceneHome.CARD_HEIGHT
             j = pos[0]//SceneHome.CARD_WIDTH
             if i>=0 and i<4 and j>=0 and j<13:
@@ -328,7 +328,7 @@ class SceneGame(Scene):
                     elif self.card2==None:
                         # 檢查一張card是否被點了兩次
                         if card.id!=self.card1.id:
-							# 暫時不接受MOUSEBUTTONDOWN的事件
+                            #暫時不接受MOUSEBUTTONDOWN的事件
                             pygame.event.set_blocked(pygame.MOUSEBUTTONDOWN)
                             self.card2 = card
                             self.card2_indices=(i,j)
@@ -369,8 +369,8 @@ class SceneGame(Scene):
             self.card2 = None 
             self.card1_indices=None
             self.card2_indices=None
-			#恢復接收MOUSEBUTTONDOWN的事件
-			pygame.event.set_allowed(pygame.MOUSEBUTTONDOWN)
+            #恢復接收MOUSEBUTTONDOWN的事件
+            pygame.event.set_allowed(pygame.MOUSEBUTTONDOWN)
 ```
 
 :sweat_smile:
